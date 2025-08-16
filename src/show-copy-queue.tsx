@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Action, ActionPanel, List, showToast, Toast, Color, Clipboard, LocalStorage } from "@raycast/api";
+import { Action, ActionPanel, List, showToast, Toast, Color, Clipboard, LocalStorage, getPreferenceValues } from "@raycast/api";
 import { getQueue, removeFromQueue, clearQueue, QueueItem } from "./queue-manager";
 
 export default function ShowCopyQueue() {
   const [queue, setQueue] = useState<QueueItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const preferences = getPreferenceValues<{ showPreviewLength: string }>();
+  const previewLength = parseInt(preferences.showPreviewLength) || 50;
 
   const loadQueue = async () => {
     try {
@@ -37,11 +39,11 @@ export default function ShowCopyQueue() {
       // Copy to clipboard
       await Clipboard.copy(item.content);
       
-      const preview = item.content.length > 30 ? item.content.substring(0, 30) + "..." : item.content;
+      const preview = item.content.length > previewLength ? item.content.substring(0, previewLength) + "..." : item.content;
       await showToast({
         style: Toast.Style.Success,
-        title: `Ready to paste: "${preview}"`,
-        message: `Press ⌘V to paste • ${updatedQueue.length} remaining in queue`,
+        title: `Copied to clipboard: "${preview}"`,
+        message: `Now press ⌘V to paste • ${updatedQueue.length} remaining in queue`,
       });
     } catch (error) {
       await showToast({
@@ -92,7 +94,7 @@ export default function ShowCopyQueue() {
   const getPreview = (content: string) => {
     // Replace newlines with spaces and truncate
     const cleaned = content.replace(/\s+/g, ' ').trim();
-    return cleaned.length > 100 ? cleaned.substring(0, 100) + "..." : cleaned;
+    return cleaned.length > previewLength ? cleaned.substring(0, previewLength) + "..." : cleaned;
   };
 
   return (
@@ -118,7 +120,7 @@ export default function ShowCopyQueue() {
                 actions={
                   <ActionPanel>
                     <Action
-                      title="Copy and Remove from Queue"
+                      title="Copy to Clipboard & Remove from Queue"
                       onAction={() => handlePasteItem(item.id)}
                       shortcut={{ modifiers: ["cmd"], key: "c" }}
                     />

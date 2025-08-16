@@ -1,8 +1,11 @@
-import { Clipboard, showToast, Toast } from "@raycast/api";
+import { Clipboard, showToast, Toast, getPreferenceValues } from "@raycast/api";
 import { addToQueue, getQueueSize, getQueue } from "./queue-manager";
 
 export default async function AddToCopyQueue() {
   try {
+    const preferences = getPreferenceValues<{ showPreviewLength: string }>();
+    const previewLength = parseInt(preferences.showPreviewLength) || 50;
+    
     // Get current clipboard content
     const clipboardText = await Clipboard.readText();
 
@@ -35,8 +38,8 @@ export default async function AddToCopyQueue() {
     // Get updated queue size for feedback
     const queueSize = await getQueueSize();
     const preview =
-      clipboardText.length > 30
-        ? clipboardText.substring(0, 30) + "..."
+      clipboardText.length > previewLength
+        ? clipboardText.substring(0, previewLength) + "..."
         : clipboardText;
 
     await showToast({
