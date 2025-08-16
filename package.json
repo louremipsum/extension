@@ -17,7 +17,8 @@
         "add",
         "queue",
         "clipboard"
-      ]
+      ],
+      "hotkey": "cmd+shift+c"
     },
     {
       "name": "paste-from-queue",
@@ -29,7 +30,8 @@
         "queue",
         "clipboard",
         "next"
-      ]
+      ],
+      "hotkey": "cmd+shift+v"
     },
     {
       "name": "show-copy-queue",
@@ -42,7 +44,8 @@
         "list",
         "queue",
         "clipboard"
-      ]
+      ],
+      "hotkey": "cmd+shift+q"
     },
     {
       "name": "clear-copy-queue",
